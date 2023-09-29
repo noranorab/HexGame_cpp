@@ -227,15 +227,18 @@ class HexGame{
 int main(){
     HexGame hex;
     int pos = 0;
+    int total = 121;
     while (true){
         hex.printAvailablePositions();
+        vector<int> allowedPos = hex.availablePositions();
+        total--;
         if (hex.getCurrentPlayer() == 'X'){
             cin >> pos;
             hex.markPosition(pos);
         }else{
             srand(time(0));
-            pos = rand() % 121;
-            hex.markPosition(pos);
+            pos = rand() % total;
+            hex.markPosition(allowedPos[pos]);
         }
        
     }
