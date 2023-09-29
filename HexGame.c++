@@ -166,10 +166,15 @@ class HexGame{
             board[n] = currentPlayer;
             available[n] = false;
 
+
             drawBoard();
 
             //switch players;
             currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0];
+
+        }
+        char getCurrentPlayer(){
+            return currentPlayer;
         }
 
         void drawBoard(){
@@ -186,6 +191,23 @@ class HexGame{
                         cout <<endl;
                         
                     }
+        }
+
+        vector<int> availablePositions(){
+            vector<int> availablePos;
+            for (int i = 0; i<121; ++i){
+                if (available[i] == true){
+                    availablePos.push_back(i);
+                }
+            }
+            return availablePos;
+        }
+        void printAvailablePositions(){
+            vector<int> availablePos  = availablePositions();
+            for (int i=0; i<availablePos.size(); ++i){
+                cout << availablePos[i] << " ";
+            }
+            cout <<endl;
         }
         
 
@@ -204,10 +226,18 @@ class HexGame{
 
 int main(){
     HexGame hex;
+    int pos = 0;
     while (true){
-        srand(time(0));
-        int randomPos = rand() % 121;
-        hex.markPosition(randomPos);
+        hex.printAvailablePositions();
+        if (hex.getCurrentPlayer() == 'X'){
+            cin >> pos;
+            hex.markPosition(pos);
+        }else{
+            srand(time(0));
+            pos = rand() % 121;
+            hex.markPosition(pos);
+        }
+       
     }
 
     return 0;
