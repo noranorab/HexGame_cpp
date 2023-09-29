@@ -27,9 +27,9 @@ class Node{
         Node(int i, int j):i(i), j(j){};
         Node (int n): n(n){};
 
-        int getNode(int i, int j){ return i*11+j; }
-        int getXFromN(int n){ return n/11; }
-        int getYFromN(int n){ return n%j; }
+        static int getNode(int i, int j){ return i*11+j; }
+        int getXFromN(){ return n/11; }
+        int getYFromN(){ return n%11; }
         int getX(){ return i; }
         int getY(){ return j; }
         void setX(int i){ i = i; }
@@ -37,20 +37,20 @@ class Node{
         deque<int> getEdgeList(int n){ return edgeList; }
 
         bool isCornerTypeOne(int n){
-            int i = getXFromN(n);
-            int j = getYFromN(n);
+            int i = getXFromN();
+            int j = getYFromN();
             return (i==0 && j==0) || (i==n-1 && j==n-1);
         }
 
         bool isCornerTypeTwo(int n){
-            int i = getXFromN(n);
-            int j = getYFromN(n);
+            int i = getXFromN();
+            int j = getYFromN();
             return (i==0 && j==n-1) || (i==n-1 && j==0);
         }
 
         bool isEdge(int n){
-            int i = getXFromN(n);
-            int j = getYFromN(n);
+            int i = getXFromN();
+            int j = getYFromN();
             return i==0 || j==0 || i==10 || j==10;
         }
 
@@ -59,8 +59,8 @@ class Node{
         }
 
         void setAdjacentsList(int n){
-            int i = getXFromN(n);
-            int j = getYFromN(n);
+            int i = getXFromN();
+            int j = getYFromN();
 
             if(isInternal(n)){
                 edgeList.push_front(i*11+j+1);
@@ -126,28 +126,89 @@ class HexGraph{
        
 
 };
-void initGame(){
+
+class HexGame{
+    public :
+        HexGame() : currentPlayer(players[0]){
+            for (int i=0; i<121; ++i){
+                board[i] = '.';
+                available[i] = true;
+            }
+        }
+        void initGame(){
             for (int j=0; j<11; ++j)
                     {
                         for (int k=0; k<11-j; ++k){
                             cout << " ";
                         }
                         for (int i=0; i<11; ++i){
-                            cout << ".  ";
+                            cout << ". ";
                             
                         }
                         cout <<endl;
                         
                     }
-}
+        }
+        
+        bool isAvailable(int n){ return available[n]; }
 
+        
 
+        void markPosition(int n){
+            Node node(n);
+            int l = node.getXFromN();
+            int m = node.getYFromN();
 
-class randomPlay{
+            if (!isAvailable(n)) {
+                    return;
+            }
 
+            board[n] = currentPlayer;
+            available[n] = false;
+
+            drawBoard();
+
+            //switch players;
+            currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0];
+        }
+
+        void drawBoard(){
+            for (int j=0; j<11; ++j)
+                    {
+                        for (int k=0; k<11-j; ++k){
+                            cout << " ";
+                        }
+                        for (int i=0; i<11; ++i){
+                            int n = Node::getNode(i, j);
+                            cout << board[n] << " ";
+ 
+                        }
+                        cout <<endl;
+                        
+                    }
+        }
+        
+
+    private : 
+        char board[121];
+        bool available[121];
+        char players[2] = {'X', 'O'};
+        char currentPlayer;
 };
 
 
+
+
+
+
+
 int main(){
-    initGame();
+    HexGame hex;
+    while (true){
+        srand(time(0));
+        int randomPos = rand() % 121;
+        hex.markPosition(randomPos);
+    }
+
+    return 0;
 }
