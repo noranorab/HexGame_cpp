@@ -14,7 +14,7 @@ using namespace std;
 
 enum class Player: short { B, R };
 
-enum class HexNode : short {Empty = 0, B=1, R=2};
+enum class HexNode : char {Empty = '.', B='X', R='O'};
 
 class Node{
     private:
@@ -116,15 +116,17 @@ class Node{
 class HexGraph{
     private :
         vector<deque<int>> edgeList;
+        vector<bool> visited;
 
     public:
         HexGraph(){
             int count=0;
             edgeList.resize(121);
+            visited.resize(121, false);
             for(int i=0; i<11; ++i){
                 for (int j=0; j<11; ++j){
-                    count = i*11+j;
-                    makeNode(i, j, edgeList[count]);
+             
+                    makeNode(i, j, edgeList[count++]);
                 }
             }
         }
@@ -135,13 +137,26 @@ class HexGraph{
             node.setAdjacentsList(n);
         }
 
+        bool hasConnectedPath(char player, const char *board){
+
+            for (int i=0; i<11; ++i){
+                int startNode = Node::getNode(i,0);
+                if (player == 'X' && board[startNode] == 'X' && dfs(player, startNode)){
+                    return true;
+                }else if(player == 'O' && board[startNode] == 'O' && dfs(player, startNode)){
+                    return true;
+                }
+            }
+            return false;
+        }
+
        
 
 };
 
 class HexGame{
     public :
-        HexGame() : currentPlayer(players[0]){
+        HexGame() : currentPlayer(players[0]), graph(){
             for (int i=0; i<121; ++i){
                 board[i] = '.';
                 available[i] = true;
@@ -228,6 +243,7 @@ class HexGame{
         bool available[121];
         char players[2] = {'X', 'O'};
         char currentPlayer;
+        HexGraph graph;
 };
 
 
