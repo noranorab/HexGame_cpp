@@ -22,11 +22,18 @@ class Node{
         int j;
         int n;
         deque<int> edgeList;
+        HexNode state = HexNode::Empty;
     
     public:
         Node(int i, int j):i(i), j(j){};
         Node (int n): n(n){};
 
+        enum HexNode getState(){
+            return this->state;
+        }
+        void setState(HexNode state){
+            this->state = state;
+        }
         static int getNode(int i, int j){ return i*11+j; }
         int getXFromN(){ return n/11; }
         int getYFromN(){ return n%11; }
@@ -116,12 +123,17 @@ class HexGraph{
             edgeList.resize(121);
             for(int i=0; i<11; ++i){
                 for (int j=0; j<11; ++j){
-                    makeNode(i, j, edgeList[count++]);
+                    count = i*11+j;
+                    makeNode(i, j, edgeList[count]);
                 }
             }
         }
 
-        void makeNode(int i, int j, deque<int> edgeList){}
+        void makeNode(int i, int j, deque<int> edgeList){
+            Node node(i,j);
+            int n = node.getNode(i, j);
+            node.setAdjacentsList(n);
+        }
 
        
 
@@ -228,20 +240,27 @@ int main(){
     HexGame hex;
     int pos = 0;
     int total = 121;
+    char curr = 'X';
     while (true){
-        hex.printAvailablePositions();
+        
         vector<int> allowedPos = hex.availablePositions();
-        total--;
-        if (hex.getCurrentPlayer() == 'X'){
+        hex.printAvailablePositions();
+
+        if (curr == 'X'){
             cin >> pos;
-            hex.markPosition(pos);
-        }else{
+            hex.markPosition(allowedPos[pos]);
+
+        }
+
+      
+
             srand(time(0));
             pos = rand() % total;
             hex.markPosition(allowedPos[pos]);
+            total--;
         }
        
-    }
+    
 
     return 0;
 }
