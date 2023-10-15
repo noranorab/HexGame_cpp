@@ -141,16 +141,35 @@ class HexGraph{
 
             for (int i=0; i<11; ++i){
                 int startNode = Node::getNode(i,0);
-                if (player == 'X' && board[startNode] == 'X' && dfs(player, startNode)){
+                if (player == 'X' && board[startNode] == 'X' && dfs(player, startNode, board)){
                     return true;
-                }else if(player == 'O' && board[startNode] == 'O' && dfs(player, startNode)){
+                }else if(player == 'O' && board[startNode] == 'O' && dfs(player, startNode, board)){
                     return true;
                 }
             }
             return false;
         }
 
-       
+        bool dfs(char player, int node, const char *board){
+
+            if(player == 'X' && node % 11 == 10){
+                return true;
+            }else if(player == 'O' && node % 11 == 10){
+                return true;
+            }
+
+            visited[node] = true;
+
+            for (int neighbor : edgeList[node]){
+                if (!visited[neighbor] && board[neighbor] == player){
+                    dfs(player, neighbor, board); 
+                }
+            }
+
+            return false;
+            
+
+        }
 
 };
 
@@ -178,9 +197,7 @@ class HexGame{
         }
         
         bool isAvailable(int n){ return available[n]; }
-
-        
-
+    
         void markPosition(int n){
             Node node(n);
             int l = node.getXFromN();
@@ -236,6 +253,20 @@ class HexGame{
             }
             cout <<endl;
         }
+
+        void isWinner(){
+          
+            if (graph.hasConnectedPath('X', board)) {
+                cout << "Player X wins!" << endl;
+                exit(0); // Sortie du programme car le jeu est terminé
+            } else if (graph.hasConnectedPath('O', board)) {
+                cout << "Player O wins!" << endl;
+                exit(0); // Sortie du programme car le jeu est terminé
+            }
+            
+        }
+
+       
         
 
     private : 
@@ -261,12 +292,13 @@ int main(){
         
         vector<int> allowedPos = hex.availablePositions();
         hex.printAvailablePositions();
-
+        
         if (curr == 'X'){
             cin >> pos;
             hex.markPosition(allowedPos[pos]);
 
         }
+        
 
       
 
@@ -274,7 +306,12 @@ int main(){
             pos = rand() % total;
             hex.markPosition(allowedPos[pos]);
             total--;
-        }
+            hex.isWinner(); // Vérifier s'il y a un gagnant après chaque mouvement
+
+        
+
+    }
+ 
        
     
 
